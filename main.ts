@@ -1,28 +1,57 @@
-//Завдання #1: Дискримінантне об'єднання з узагальненням
+//Завдання #1: Дискримінантне об'єднання з узагальненням (новая версия)
 
-type Status = 'success' | 'error';
-
-interface IResult {
-    success: { data: string };
-    error: { error: string };
+interface ISuccessResult {
+  status: 'success',
+  data: string,
 }
 
-function handleResult<TStatus extends Status, TResult extends IResult[TStatus]>(status: TStatus, result: TResult): string | never {
-    if (isSuccessResult(result)) {
+interface IErrorResult {
+  status: 'error',
+  error: string,
+}
+
+type Result = ISuccessResult | IErrorResult;
+
+function handleResult<T extends Result>(result: T): string | never {
+    if (result.status === 'success') {
       return result.data;
     } else {
       throw new Error(result.error);
     }
 }
 
-function isSuccessResult(result: unknown): result is IResult['success'] {
-  return typeof result === 'object' && result !== null && 'data' in result;
-}
+const successResult: ISuccessResult = { status: 'success', data: 'Operation completed' };
+const errorResult: IErrorResult = { status: 'error', error: 'Something went wrong' };
 
-const successResult: IResult['success'] = { data: 'Operation completed' };
-const errorResult: IResult['error'] = { error: 'Something went wrong' };
+console.log(handleResult<ISuccessResult>({ status: 'success', data: 'Operation completed' })); // Operation completed
+//handleResult<IErrorResult>({ status: 'error', error: 'Something went wrong' });                // Error: Something went wrong
 
-console.log(handleResult('success', successResult)); // "Operation completed"
+//-----------------------------------------------------------------
+//Завдання #1: Дискримінантне об'єднання з узагальненням (старая версия)
+
+// type Status = 'success' | 'error';
+
+// interface IResult {
+//     success: { data: string };
+//     error: { error: string };
+// }
+
+// function handleResult<TStatus extends Status, TResult extends IResult[TStatus]>(status: TStatus, result: TResult): string | never {
+//     if (isSuccessResult(result)) {
+//       return result.data;
+//     } else {
+//       throw new Error(result.error);
+//     }
+// }
+
+// function isSuccessResult(result: unknown): result is IResult['success'] {
+//   return typeof result === 'object' && result !== null && 'data' in result;
+// }
+
+// const successResult: IResult['success'] = { data: 'Operation completed' };
+// const errorResult: IResult['error'] = { error: 'Something went wrong' };
+
+//console.log(handleResult('success', successResult)); // "Operation completed"
 //handleResult('error', errorResult);                  // Error: Something went wrong
 
 //-----------------------------------------------------------------

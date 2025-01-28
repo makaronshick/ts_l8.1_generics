@@ -1,4 +1,4 @@
-//Завдання #1: Дискримінантне об'єднання з узагальненням
+//Завдання #1: Дискримінантне об'єднання з узагальненням (новая версия)
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -8,20 +8,38 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-function handleResult(status, result) {
-    if (isSuccessResult(result)) {
+function handleResult(result) {
+    if (result.status === 'success') {
         return result.data;
     }
     else {
         throw new Error(result.error);
     }
 }
-function isSuccessResult(result) {
-    return typeof result === 'object' && result !== null && 'data' in result;
-}
-var successResult = { data: 'Operation completed' };
-var errorResult = { error: 'Something went wrong' };
-console.log(handleResult('success', successResult)); // "Operation completed"
+var successResult = { status: 'success', data: 'Operation completed' };
+var errorResult = { status: 'error', error: 'Something went wrong' };
+console.log(handleResult({ status: 'success', data: 'Operation completed' })); // Operation completed
+//handleResult<IErrorResult>({ status: 'error', error: 'Something went wrong' });                // Error: Something went wrong
+//-----------------------------------------------------------------
+//Завдання #1: Дискримінантне об'єднання з узагальненням (старая версия)
+// type Status = 'success' | 'error';
+// interface IResult {
+//     success: { data: string };
+//     error: { error: string };
+// }
+// function handleResult<TStatus extends Status, TResult extends IResult[TStatus]>(status: TStatus, result: TResult): string | never {
+//     if (isSuccessResult(result)) {
+//       return result.data;
+//     } else {
+//       throw new Error(result.error);
+//     }
+// }
+// function isSuccessResult(result: unknown): result is IResult['success'] {
+//   return typeof result === 'object' && result !== null && 'data' in result;
+// }
+// const successResult: IResult['success'] = { data: 'Operation completed' };
+// const errorResult: IResult['error'] = { error: 'Something went wrong' };
+//console.log(handleResult('success', successResult)); // "Operation completed"
 //handleResult('error', errorResult);                  // Error: Something went wrong
 //-----------------------------------------------------------------
 //Завдання #2: Узагальнена черга
